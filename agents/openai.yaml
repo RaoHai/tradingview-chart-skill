@@ -1,0 +1,6 @@
+interface:
+  display_name: "TradingView 标的图表"
+  short_description: "讨论股票与 ETF 时，用 TradingView 图表库展示 K 线和关键价位"
+  default_prompt: "使用 $tradingview-chart 核验标的行情，并绘制 TradingView 图表库交互图表。"
+policy:
+  allow_implicit_invocation: true

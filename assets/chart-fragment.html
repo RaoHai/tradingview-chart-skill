@@ -1,0 +1,41 @@
+<section id="__ROOT_ID__">
+  <h3 class="chart-title"></h3>
+  <div class="text-small text-muted chart-meta"></div>
+  <div class="text-small tabular-nums chart-readout"></div>
+  <div class="chart-canvas" role="img"></div>
+  <div class="text-small text-muted chart-legend"></div>
+  <div class="text-small text-muted">数据：<a class="chart-source" target="_blank" rel="noopener"></a> · <a href="https://www.tradingview.com/" target="_blank" rel="noopener">TradingView Lightweight Charts™</a></div>
+</section>
+<style>
+  #__ROOT_ID__ .chart-canvas { width:100%; height:420px; margin-block:8px; }
+  #__ROOT_ID__ .chart-readout { min-height:38px; margin-top:8px; }
+  #__ROOT_ID__ .chart-title { padding-right:90px; }
+  #__ROOT_ID__ .chart-legend { margin-bottom:6px; }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/lightweight-charts@5.0.0/dist/lightweight-charts.standalone.production.js"></script>
+<script>
+(() => {
+ const root=document.getElementById('__ROOT_ID__'), data=__CHART_DATA__, bars=data.bars;
+ const el=root.querySelector('.chart-canvas');
+ root.querySelector('.chart-title').textContent=data.symbol+' · 日 K';
+ root.querySelector('.chart-meta').textContent=data.currency+' · 截至 '+data.as_of+' · '+data.adjustment;
+ const source=root.querySelector('.chart-source'); source.textContent=data.source_name; source.href=data.source_url;
+ el.setAttribute('aria-label',`${data.symbol} 日线和成交量，${bars[0].time} 至 ${bars.at(-1).time}，最新收盘 ${bars.at(-1).close} ${data.currency}，横线为分析参考价位`);
+ if(!window.LightweightCharts){el.textContent='图表库未加载，请检查 CDN 连接。';el.setAttribute('role','alert');return;}
+ function color(token){const probe=document.createElement('span');probe.style.color='var('+token+')';root.appendChild(probe);const value=getComputedStyle(probe).color;probe.remove();return value;}
+ const chart=LightweightCharts.createChart(el,{autoSize:true,layout:{attributionLogo:true},rightPriceScale:{scaleMargins:{top:0.08,bottom:0.26}},timeScale:{borderVisible:false},localization:{locale:'zh-CN'},grid:{vertLines:{visible:false}}});
+ const candles=chart.addSeries(LightweightCharts.CandlestickSeries);
+ candles.setData(bars.map(({time,open,high,low,close})=>({time,open,high,low,close})));
+ const volume=chart.addSeries(LightweightCharts.HistogramSeries,{priceScaleId:'volume',priceFormat:{type:'volume'},priceLineVisible:false,lastValueVisible:false});
+ volume.priceScale().applyOptions({scaleMargins:{top:0.82,bottom:0},visible:false});
+ const averages=[];
+ for(const period of [20,50]){if(bars.length<period)continue;const series=chart.addSeries(LightweightCharts.LineSeries,{lineWidth:1,priceLineVisible:false,lastValueVisible:false,crosshairMarkerVisible:false});series.setData(bars.slice(period-1).map((b,i)=>({time:b.time,value:bars.slice(i,i+period).reduce((s,p)=>s+p.close,0)/period})));averages.push({period,series});}
+ const lines=(data.levels||[]).map(l=>({...l,line:candles.createPriceLine({price:l.price,title:l.title,lineStyle:LightweightCharts.LineStyle.Dashed,lineWidth:1,axisLabelVisible:true})}));
+ function theme(){const up=color('--green'),down=color('--red'),border=color('--border');chart.applyOptions({layout:{background:{type:'solid',color:color('--background')},textColor:color('--foreground')},grid:{horzLines:{color:border}},rightPriceScale:{borderColor:border}});candles.applyOptions({upColor:up,downColor:down,wickUpColor:up,wickDownColor:down,borderVisible:false});volume.setData(bars.filter(b=>b.volume!=null).map(b=>({time:b.time,value:b.volume,color:b.close>=b.open?up:down})));averages.forEach((a,i)=>a.series.applyOptions({color:color('--viz-series-'+(i+1))}));lines.forEach(l=>l.line.applyOptions({color:color(l.kind==='support'?'--viz-series-3':'--viz-series-4')}));}
+ theme();new MutationObserver(theme).observe(document.documentElement,{attributes:true,attributeFilter:['class','style','data-theme']});chart.timeScale().fitContent();
+ const readout=root.querySelector('.chart-readout');
+ function show(b){readout.textContent=`${b.time}　开 ${b.open.toFixed(2)}　高 ${b.high.toFixed(2)}　低 ${b.low.toFixed(2)}　收 ${b.close.toFixed(2)}`+(b.volume!=null?`　量 ${b.volume.toLocaleString()} 份/股`:'');}
+ show(bars.at(-1));const byDate=new Map(bars.map(b=>[b.time,b]));chart.subscribeCrosshairMove(p=>{const t=typeof p.time==='string'?p.time:p.time&&`${p.time.year}-${String(p.time.month).padStart(2,'0')}-${String(p.time.day).padStart(2,'0')}`;show(byDate.get(t)||bars.at(-1));});
+ root.querySelector('.chart-legend').textContent='绿涨红跌 · 成交量（份/股） · '+averages.map(a=>'MA'+a.period).join(' / ')+' · 横线：分析参考价位';
+})();
+</script>
