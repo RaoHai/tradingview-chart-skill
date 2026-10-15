@@ -1,71 +1,102 @@
 # tradingview-chart
 
-An agent skill for verified financial charts with TradingView Lightweight Charts™.
+**Give your agent an interactive market chart.**
 
-给 Codex 等支持 `SKILL.md` 的智能体使用的交互行情图技能：日 K、成交量、MA20/MA50、参考价位、缩放拖动与十字光标。使用开源 **Lightweight Charts 5.0.0**，并非 TradingView 网站截图或 Advanced Charts。
+English · [简体中文](README.zh-CN.md)
 
-## 安装
+[![Tests](https://github.com/RaoHai/tradingview-chart-skill/actions/workflows/test.yml/badge.svg)](https://github.com/RaoHai/tradingview-chart-skill/actions/workflows/test.yml)
+[![MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](scripts/build_chart.py)
+[![Lightweight Charts 5.0.0](https://img.shields.io/badge/Lightweight_Charts-5.0.0-2962FF)](https://github.com/tradingview/lightweight-charts)
 
-将本仓库克隆到智能体的技能目录，文件夹命名为 `tradingview-chart`。Codex 的常见安装方式：
+A small `SKILL.md` package for Codex and compatible agents. Turn sourced OHLCV into candlesticks, volume and moving averages with **TradingView Lightweight Charts™**. Zoom, pan and inspect prices with a crosshair, inside a compatible conversation host or in a standalone browser page.
+
+![STAR 50 ETF: generated daily candlesticks, volume and MA20/MA50 in light mode](docs/images/star50-light.jpg)
+
+*Actual builder output · 588000.SH · 160 daily bars, 2026-02-06–2026-10-12 · frozen historical data, not live quotes. [Data and screenshot provenance](docs/SHOWCASE.md).*
+
+## Why this skill
+
+Financial conversations are easier to inspect with a chart beside the explanation. This skill gives the agent a repeatable workflow: **verify the instrument and data → build → check the render → explain the chart**.
+
+- **Interactive by default.** Candles, volume, MA20/MA50, optional support/resistance lines, native zoom/pan and crosshair.
+- **Traceable observations.** Source, date, currency and adjustment convention travel with the input. The builder checks dates, numeric values and OHLC bounds.
+- **Portable output.** An inline HTML fragment for compatible hosts, or `--standalone` for a browser page with light/dark theming.
+- **Small runtime.** Python 3.10+, standard library only. A pinned chart library loads from a CDN.
+
+The agent obtains and verifies the market data using its available tools. This package renders supplied JSON; it does not include a quote subscription, data downloader or order execution. Structural validation does not prove a quote is correct.
+
+## Install the skill
 
 ```bash
 git clone https://github.com/RaoHai/tradingview-chart-skill.git ~/.codex/skills/tradingview-chart
 ```
 
-Windows PowerShell：
+Windows PowerShell:
 
 ```powershell
 git clone https://github.com/RaoHai/tradingview-chart-skill.git "$env:USERPROFILE/.codex/skills/tradingview-chart"
 ```
 
-若设置了 `CODEX_HOME`，使用其 `skills/tradingview-chart` 目录。已有同名技能时先比较内容，避免覆盖本地修改。启动新的会话加载技能后，可以说：
+If `CODEX_HOME` is set, use its `skills/tradingview-chart` directory instead. Compare existing local changes before replacing an installed skill. Start a new agent session to discover the skill.
 
-> 使用 $tradingview-chart 核验 588000 的近一年日线，画出成交量、MA20/MA50，并说明数据日期和复权口径。
+Then ask:
 
-技能要求智能体先获取并核验真实 OHLCV，再生成图。**不自带行情订阅、数据下载器或交易执行功能。** 数据获取依赖宿主可用工具；生成器只接受 JSON。
+> Use $tradingview-chart to chart 588000.SH over the last year. Include volume and MA20/MA50, verify the source and adjustment convention, and state the last trading session.
 
-## 独立运行
+Other `SKILL.md`-compatible agents can load the same folder through their own skill installation mechanism. Inline display depends on the host; standalone HTML does not need Codex.
 
-需要 Python 3.10+，无 pip 运行依赖。浏览器需联网加载固定版本的图表库。
+## Try it without an agent
+
+From the repository root:
 
 ```bash
-python scripts/build_chart.py --input examples/588000-historical.json --output output/chart.html --standalone
+python scripts/build_chart.py --input docs/examples/588000.json --output output/chart.html --standalone
 python -m http.server 8765 --directory output
 ```
 
-浏览器打开 `http://localhost:8765/chart.html`。也可直接打开生成的 HTML。例子是上交所 588000 的 **2025 年历史行情**，仅用于演示，日期、来源、复权及量能单位都记录在 JSON 中；不代表当前价格。
+Open **http://localhost:8765/chart.html**, or open the HTML file directly. No pip packages or API key are required for this bundled historical example. Internet access is needed for the chart library from jsDelivr.
 
-去掉 `--standalone` 则输出 HTML 片段，供支持内联 HTML 的宿主渲染。片段使用宿主主题变量；独立网页自带亮暗主题，不依赖 Codex 或另一项技能。嵌入时需允许 jsDelivr 脚本与片段中的脚本执行。
+Remove `--standalone` to generate an inline fragment. The embedding host must supply theme variables and allow its scripts and the pinned CDN library.
 
-## 输入格式
+## More examples
 
-必需字段：
-
-| 字段 | 含义 |
+| Technology leaders · light | Banking · dark |
 | --- | --- |
-| `symbol` | 代码，建议附交易所和名称 |
-| `currency` | 价格币种 |
-| `as_of` | 最后交易日、市场时区、常规盘／盘后与延迟说明 |
-| `source_name`, `source_url` | 数据来源名称与 HTTPS 地址 |
-| `adjustment` | 不复权／前复权等口径及量能单位转换 |
-| `bars` | 非空日线数组：`time`, `open`, `high`, `low`, `close`，可选 `volume` |
+| ![515000.SH technology ETF candlesticks, volume and moving averages](docs/images/technology-light.jpg) | ![512800.SH bank ETF candlesticks, volume and moving averages in dark mode](docs/images/bank-dark.jpg) |
+| [515000.SH input](docs/examples/515000.json) | [512800.SH input](docs/examples/512800.json) |
 
-`time` 必须是 `YYYY-MM-DD`；日期不得重复，生成器会排序。价格须为正的有限数且满足 OHLC 上下界；量须为非负有限数，缺量直接省略，不能填零。`volume` 使用份／股，不是成交额或手数。
+All screenshots show real, frozen historical OHLCV from the same feed for price and volume. The labels currently use Chinese market terminology; the skill instructions and this README are available in English. See [snapshot metadata and reproduction](docs/SHOWCASE.md).
 
-可选 `levels` 数组，每项包含正数 `price`、文字 `title` 和 `kind`（`support` / `resistance`）。这些是研究参考线，不是公允价值。可添加 `retrieved_utc` 等追溯字段。
+## Bring your own data
 
-MA 按输入日线收盘价计算，窗口不足时不绘制。计算不修复复权不一致、缺失交易日或错误行情，调用方须先核验数据。休市日不插值。文字内容以安全编码嵌入，避免源数据中的 HTML 结束脚本标签。
+Use UTF-8 JSON with these fields:
 
-## 验证
+| Field | Meaning |
+| --- | --- |
+| `symbol` | Ticker, ideally exchange and instrument name |
+| `currency` | Price currency |
+| `as_of` | Last session, market timezone, regular/after-hours and delay note |
+| `source_name`, `source_url` | Data provider and HTTPS source URL |
+| `adjustment` | Raw / adjusted convention and volume unit conversion |
+| `bars` | Nonempty array of `time`, `open`, `high`, `low`, `close`, optional `volume` |
+
+Dates must use `YYYY-MM-DD`; duplicates are rejected and bars are sorted. Prices must be positive, finite and satisfy OHLC bounds. Volume is nonnegative and expressed in shares/ETF units, not lots or turnover. Omit missing volume; never fill it with zero. Do not insert market holidays.
+
+Optional `levels` entries have a positive `price`, text `title`, and `kind` of `support` or `resistance`. These are analyst annotations, not fair-value estimates. Additional provenance such as `retrieved_utc` can be retained in the JSON.
+
+MA20/MA50 use supplied closes and appear only when enough observations exist. The builder does not repair missing sessions or inconsistent adjustments. Text is escaped before JSON is embedded in HTML. See [the original smaller example](examples/588000-historical.json) for a complete input.
+
+## Development
 
 ```bash
 python -m unittest discover -s tests -v
 ```
 
-覆盖 OHLC 约束、非有限数、日期冲突、缺量保留、排序、嵌入转义和独立网页输出。GitHub Actions 在 Python 3.10 / 3.13 运行这些检查。
+Tests cover OHLC and finite-number constraints, date conflicts, omitted volume, sorting, safe embedding and standalone export. CI runs on Python 3.10 and 3.13.
 
-## 许可与来源
+## License and attribution
 
-本仓库原创技能、脚本和模板使用 [MIT License](LICENSE)。Lightweight Charts 由 TradingView 提供，使用 Apache-2.0，详情见 [第三方说明](THIRD_PARTY_NOTICES.md)。模板保留 TradingView 标识与链接；本项目与 TradingView 无隶属关系。
+Original skill instructions, scripts and templates: [MIT](LICENSE). TradingView Lightweight Charts 5.0.0: Apache-2.0; see [third-party notices](THIRD_PARTY_NOTICES.md). The templates preserve TradingView attribution and its link. This is an independent community project, not an official TradingView product.
 
-示例行情来自公开历史行情接口，保留来源元数据；行情数据不属于本仓库 MIT 软件授权范围。包内不含个人持仓、账户日志或科技／银行回测研究。
+Historical market-data examples retain their own source metadata and are not covered by the software's MIT license. No personal holdings, account logs or private trading research are included.
