@@ -1,0 +1,113 @@
+[
+  {
+    "ticker": "AAPL",
+    "url": "https://query1.finance.yahoo.com/v8/finance/chart/AAPL?period1=1760486400&period2=1792022400&interval=1d&events=div%2Csplits",
+    "source_sha256": "f2795eec85dd47b9743df6a6bed01fe6c2c69ae550cfbabe88718a5300a7cd30",
+    "bars": 251,
+    "first": "2025-10-15",
+    "last": "2026-10-14",
+    "omitted": [],
+    "events": {
+      "dividends": {
+        "1762785000": {
+          "amount": 0.26,
+          "date": 1762785000
+        },
+        "1770647400": {
+          "amount": 0.26,
+          "date": 1770647400
+        },
+        "1778506200": {
+          "amount": 0.27,
+          "date": 1778506200
+        },
+        "1786368600": {
+          "amount": 0.27,
+          "date": 1786368600
+        }
+      }
+    },
+    "meta": {
+      "symbol": "AAPL",
+      "exchangeName": "NMS",
+      "fullExchangeName": "NasdaqGS",
+      "currency": "USD",
+      "exchangeTimezoneName": "America/New_York"
+    },
+    "retrieved_utc": "2026-10-15T13:22:33.628058+00:00"
+  },
+  {
+    "ticker": "NVDA",
+    "url": "https://query1.finance.yahoo.com/v8/finance/chart/NVDA?period1=1760486400&period2=1792022400&interval=1d&events=div%2Csplits",
+    "source_sha256": "3c2c7cd69f07f7d4755af236ebe54e22f7d9101809899a0bf33823ce5200d5c5",
+    "bars": 251,
+    "first": "2025-10-15",
+    "last": "2026-10-14",
+    "omitted": [],
+    "events": {
+      "dividends": {
+        "1764858600": {
+          "amount": 0.01,
+          "date": 1764858600
+        },
+        "1773235800": {
+          "amount": 0.01,
+          "date": 1773235800
+        },
+        "1780579800": {
+          "amount": 0.25,
+          "date": 1780579800
+        },
+        "1789047000": {
+          "amount": 0.25,
+          "date": 1789047000
+        }
+      }
+    },
+    "meta": {
+      "symbol": "NVDA",
+      "exchangeName": "NMS",
+      "fullExchangeName": "NasdaqGS",
+      "currency": "USD",
+      "exchangeTimezoneName": "America/New_York"
+    },
+    "retrieved_utc": "2026-10-15T13:22:33.630058+00:00"
+  },
+  {
+    "ticker": "MSFT",
+    "url": "https://query1.finance.yahoo.com/v8/finance/chart/MSFT?period1=1760486400&period2=1792022400&interval=1d&events=div%2Csplits",
+    "source_sha256": "39dfdeb58157591919d03678420db9af5d26f74eeebf1bbd45e9fa279e92f2f3",
+    "bars": 251,
+    "first": "2025-10-15",
+    "last": "2026-10-14",
+    "omitted": [],
+    "events": {
+      "dividends": {
+        "1763649000": {
+          "amount": 0.91,
+          "date": 1763649000
+        },
+        "1771511400": {
+          "amount": 0.91,
+          "date": 1771511400
+        },
+        "1779370200": {
+          "amount": 0.91,
+          "date": 1779370200
+        },
+        "1787232600": {
+          "amount": 0.91,
+          "date": 1787232600
+        }
+      }
+    },
+    "meta": {
+      "symbol": "MSFT",
+      "exchangeName": "NMS",
+      "fullExchangeName": "NasdaqGS",
+      "currency": "USD",
+      "exchangeTimezoneName": "America/New_York"
+    },
+    "retrieved_utc": "2026-10-15T13:22:33.632059+00:00"
+  }
+]

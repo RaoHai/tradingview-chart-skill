@@ -1,26 +1,27 @@
 # Screenshot provenance / 截图来源
 
-These are browser screenshots of the included builder, not fabricated chart images or screenshots of tradingview.com. Price and volume are from the same Tencent Finance daily snapshot. No private account information is included.
+These are browser screenshots of this package's chart builder. The current gallery shows **NVIDIA (NVDA), Apple (AAPL), and Microsoft (MSFT)** with English labels, sourced from Yahoo Finance daily historical OHLCV. They are not fabricated charts or screenshots of tradingview.com.
 
-这些图片是本包生成器实际渲染的浏览器截图。截图制作于 **2026-10-15（Asia/Taipei）**，行情最后交易日是 **2026-10-12**；两者不可混为一谈。
+截图制作于 **2026-10-15（Asia/Taipei）**；行情最后交易日为 **2026-10-14（America/New_York）**。这些是历史常规盘收盘数据，非实时或盘后报价。
 
 | Input | Instrument | Market / currency | Coverage | Screenshot |
 | --- | --- | --- | --- | --- |
-| [588000.json](examples/588000.json) | STAR 50 ETF / 科创50ETF | SSE / CNY | 2026-02-06–2026-10-12, 160 bars | [Light](images/star50-light.jpg) |
-| [515000.json](examples/515000.json) | Technology leaders ETF / 科技龙头ETF | SSE / CNY | Same 160 sessions | [Light](images/technology-light.jpg) |
-| [512800.json](examples/512800.json) | Bank ETF / 银行ETF | SSE / CNY | Same 160 sessions | [Dark](images/bank-dark.jpg) |
+| [NVDA.json](examples/NVDA.json) | NVIDIA / 英伟达 | NASDAQ / USD | 2025-10-15–2026-10-14, 251 bars | [Dark](images/nvda-dark.jpg) |
+| [AAPL.json](examples/AAPL.json) | Apple / 苹果 | NASDAQ / USD | Same 251 sessions | [Light](images/aapl-light.jpg) |
+| [MSFT.json](examples/MSFT.json) | Microsoft / 微软 | NASDAQ / USD | Same 251 sessions | [Light](images/msft-light.jpg) |
 
 ## Data conventions
 
-- Regular-session daily observations, Asia/Shanghai (UTC+8); frozen historical closes, not live or intraday quotes.
-- Tencent `qfqday` forward-adjusted OHLC. Each JSON retains its exact HTTPS source URL and original UTC retrieval timestamp (2026-10-12 UTC / 2026-10-13 UTC+8).
-- Tencent's volume field is in 100-unit lots; converted by ×100 to ETF units. Both price and volume are sourced from Tencent. Independent unit checks on overlapping minute observations confirmed the scale, with provider aggregate differences up to approximately 1.71%; no feeds are spliced.
-- These snapshots are the last 160 observations of the original source response. No holiday interpolation or fabricated volume. Input validation checks finite values, OHLC bounds and unique ISO dates.
-- MA20/MA50 use the supplied closes. Their lines start after 20/50 observations; there is no pre-window warmup in these examples.
-- No support/resistance levels were added to these screenshots. The builder supports such analyst annotations, but the gallery only demonstrates market data, volume and moving averages.
-- Candles use green up / red down. The screenshot labels currently use Chinese, independently of the README language.
+- Yahoo Finance chart endpoint, daily `indicators.quote` OHLCV. Exact HTTPS query URLs and UTC retrieval timestamps are retained in each JSON. Retrieved on 2026-10-15 UTC / Asia/Taipei.
+- All three instruments were verified as NasdaqGS (`NMS`), USD, `America/New_York`. Daily timestamps were mapped to that market timezone before assigning session dates.
+- The query uses a fixed end cutoff of 2026-10-15 00:00 UTC, so it excludes the 2026-10-15 US session. No incomplete current-day bar is displayed.
+- OHLC is used as returned by the quote endpoint, not the separate dividend-adjusted `adjclose` series. Cash dividends are not adjusted. The returned corporate-action events contain no splits within the displayed window. These are price charts, not total-return charts.
+- Volume is the same provider's daily share count. No lot conversion, source mixing, missing-volume substitution or market-holiday interpolation.
+- All 251 observations per ticker passed finite-value, OHLC-bound and unique-date validation; no missing OHLC observations were dropped.
+- MA20/MA50 use supplied closes and begin after their respective windows; there is no pre-window warmup.
+- No support/resistance levels were added. Candles use green up / red down. `locale: "en-US"` selects English titles, dates, OHLC readouts, volume legends and source labels.
 
-The market data is not licensed under the repository's MIT software license. See [third-party notices](../THIRD_PARTY_NOTICES.md).
+The market data is not covered by the repository's MIT software license. See [third-party notices](../THIRD_PARTY_NOTICES.md).
 
 ## Reproduce
 
@@ -29,6 +30,6 @@ python scripts/build_showcase.py
 python -m http.server 8765 --directory output/showcase
 ```
 
-Open `http://localhost:8765/588000.html`, `515000.html`, or `512800.html`. The script builds each page with the unchanged chart generator and fixes its light/dark scheme for repeatable documentation captures. The chart library needs a CDN connection.
+Open `http://localhost:8765/NVDA.html`, `AAPL.html`, or `MSFT.html`. The script fixes each page's light/dark scheme for repeatable documentation captures. The chart library needs a CDN connection; market data is embedded in each page.
 
-The committed JPEGs were captured at the browser's default 1280×720 viewport, preserving the source label, date, axes and TradingView attribution. Capture the rendered browser viewport after the library has loaded. Screenshot files may be attached to a project introduction; retain context that these are historical demonstration data.
+The committed JPEGs were captured at the default 1280×720 browser viewport, preserving the source label, last session, axes and TradingView attribution. Capture after the library loads. The earlier ETF example inputs and screenshots remain in Git for compatibility; the README and showcase builder now use these US stocks.

@@ -19,7 +19,7 @@ The builder deliberately has **no market-data access**. It accepts only a JSON f
 
 2. **Obtain and verify OHLCV** from whatever market-data tools the host environment offers (broker SDKs, public quote endpoints, data files). Prefer 6–12 months of daily bars, plus longer weekly context when available; disclose shorter coverage. Keep price and volume on one feed — if feed coverage conflicts, disclose it and avoid volume-based conclusions. Record provenance as you go: source name and URL, retrieval time, last trading session, adjustment convention (raw / 前复权 qfq / etc.), and any volume unit conversion (e.g. lots 手 × 100 → shares 股/份).
 
-3. **Write the data JSON** (schema below). A complete working example lives at [`examples/588000-historical.json`](examples/588000-historical.json) — copy its shape, including the provenance fields.
+3. **Write the data JSON** (schema below). A complete working example lives at [`docs/examples/NVDA.json`](docs/examples/NVDA.json) — copy its shape, including the provenance fields.
 
 4. **Build the chart** with the bundled script (Python 3.10+, standard library only):
 
@@ -46,7 +46,7 @@ Required fields (UTF-8):
 - `adjustment` — adjustment convention and volume unit conversion
 - `bars` — non-empty array of `{time, open, high, low, close, volume?}`; `time` is `YYYY-MM-DD`, prices are positive finite numbers satisfying OHLC bounds, volume is a nonnegative finite number in shares/units (not lots, not turnover) — omit volume when missing, never fill zero
 
-Optional: `levels` (array of `{price, title, kind}` where kind is `support` or `resistance`), `retrieved_utc`, and other provenance fields.
+Optional: `locale` (`en-US` for English labels or `zh-CN`, the default), `levels` (array of `{price, title, kind}` where kind is `support` or `resistance`), `retrieved_utc`, and other provenance fields.
 
 Levels are research annotations — keep analyst support/resistance lines visually and conceptually separate from market data, and never present them as fair value. The full field reference and validation rules are in [README.md](README.md).
 

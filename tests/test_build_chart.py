@@ -51,6 +51,16 @@ class BuilderTests(unittest.TestCase):
         self.assertNotIn('<!doctype', builder.build(self.data))
         self.assertIn('<!doctype html>', builder.build(self.data, standalone=True))
 
+    def test_english_export_and_default_language(self):
+        self.assertIn('lang="zh-CN"', builder.build(self.data, standalone=True))
+        self.data['locale'] = 'en-US'
+        self.assertIn('lang="en-US"', builder.build(self.data, standalone=True))
+
+    def test_unsupported_language_rejected(self):
+        self.data['locale'] = 'en-US"><script>'
+        with self.assertRaises(ValueError):
+            builder.build(self.data, standalone=True)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -11,9 +11,9 @@
 
 一个适用于 Codex 等兼容 `SKILL.md` 智能体的轻量技能。使用 **TradingView Lightweight Charts™**，把有来源的 OHLCV 画成日 K、成交量和均线；支持缩放、拖动和十字光标，可在兼容的对话宿主内展示，也能导出独立网页。
 
-![科创50ETF：技能实际生成的日K、量能与MA20/MA50](docs/images/star50-light.jpg)
+![英伟达NVDA：技能实际生成的暗色日K、量能与MA20/MA50](docs/images/nvda-dark.jpg)
 
-*生成器实际输出 · 588000.SH · 2026-02-06—2026-10-12，共160个交易日 · 历史快照，非实时行情。[数据与截图来源](docs/SHOWCASE.md)。*
+*生成器实际输出 · NVDA / NASDAQ · 2025-10-15—2026-10-14，共251个交易日 · 历史快照，非实时行情。[数据与截图来源](docs/SHOWCASE.md)。*
 
 ## 为什么做这个
 
@@ -40,7 +40,7 @@ git clone https://github.com/RaoHai/tradingview-chart-skill.git "$env:USERPROFIL
 
 若设置了 `CODEX_HOME`，使用其 `skills/tradingview-chart` 目录。已有同名技能时先比较本地修改，避免覆盖。启动新会话加载技能后，可以说：
 
-> 使用 $tradingview-chart 核验 588000 的近一年日线，画出成交量、MA20/MA50，并说明来源、复权口径和最后交易日。
+> 使用 $tradingview-chart 核验 NVDA 的近一年日线，画出成交量、MA20/MA50，并说明来源、复权口径和最后交易日。
 
 其他兼容 `SKILL.md` 的智能体按其安装机制加载同一文件夹。对话内联展示依赖宿主支持；独立 HTML 不依赖 Codex。
 
@@ -49,7 +49,7 @@ git clone https://github.com/RaoHai/tradingview-chart-skill.git "$env:USERPROFIL
 在仓库根目录运行：
 
 ```bash
-python scripts/build_chart.py --input docs/examples/588000.json --output output/chart.html --standalone
+python scripts/build_chart.py --input docs/examples/NVDA.json --output output/chart.html --standalone
 python -m http.server 8765 --directory output
 ```
 
@@ -59,12 +59,12 @@ python -m http.server 8765 --directory output
 
 ## 更多标的
 
-| 科技龙头 · 亮色 | 银行 · 暗色 |
+| 苹果 AAPL · 亮色 | 微软 MSFT · 亮色 |
 | --- | --- |
-| ![科技龙头ETF日K、成交量与均线](docs/images/technology-light.jpg) | ![银行ETF暗色日K、成交量与均线](docs/images/bank-dark.jpg) |
-| [515000.SH 输入](docs/examples/515000.json) | [512800.SH 输入](docs/examples/512800.json) |
+| ![苹果AAPL日K、成交量与均线](docs/images/aapl-light.jpg) | ![微软MSFT日K、成交量与均线](docs/images/msft-light.jpg) |
+| [AAPL 输入](docs/examples/AAPL.json) | [MSFT 输入](docs/examples/MSFT.json) |
 
-三个示例均为真实历史行情，价格与成交量使用同一来源。图表标签目前使用中文，英文介绍见 [English README](README.md)。[快照口径与复现方法](docs/SHOWCASE.md)记录了数据日期、来源及截图方式。
+三个示例均为真实历史行情，价格与成交量使用同一来源。这些示例使用英文图表标签（`locale: "en-US"`）；中文标签仍为默认值。英文介绍见 [English README](README.md)。[快照口径与复现方法](docs/SHOWCASE.md)记录了数据日期、来源及截图方式。
 
 ## 换成自己的数据
 
@@ -81,9 +81,9 @@ python -m http.server 8765 --directory output
 
 `time` 必须是 `YYYY-MM-DD`；日期不得重复，生成器会排序。价格须为正的有限数且满足 OHLC 上下界；量须为非负有限数，单位为股／份，不是手或成交额。缺量直接省略，不能填零；休市日不插值。
 
-可选 `levels` 数组，每项包含正数 `price`、文字 `title` 和 `kind`（`support` / `resistance`）。这些是研究参考线，不是公允价值。可添加 `retrieved_utc` 等追溯字段。
+可选 `locale` 为 `en-US` 或 `zh-CN`（默认）。可选 `levels` 数组，每项包含正数 `price`、文字 `title` 和 `kind`（`support` / `resistance`）。这些是研究参考线，不是公允价值。可添加 `retrieved_utc` 等追溯字段。
 
-MA 按输入日线收盘价计算，窗口不足时不绘制。生成器不修复缺失交易日或复权不一致，调用方须先核验数据；嵌入文本会转义处理。完整输入也可参考[较小的原始示例](examples/588000-historical.json)。
+MA 按输入日线收盘价计算，窗口不足时不绘制。生成器不修复缺失交易日或复权不一致，调用方须先核验数据；嵌入文本会转义处理。完整输入也可参考[完整 NVDA 示例](docs/examples/NVDA.json)。
 
 ## 开发与验证
 

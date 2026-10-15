@@ -11,9 +11,9 @@ English · [简体中文](README.zh-CN.md)
 
 A small `SKILL.md` package for Codex and compatible agents. Turn sourced OHLCV into candlesticks, volume and moving averages with **TradingView Lightweight Charts™**. Zoom, pan and inspect prices with a crosshair, inside a compatible conversation host or in a standalone browser page.
 
-![STAR 50 ETF: generated daily candlesticks, volume and MA20/MA50 in light mode](docs/images/star50-light.jpg)
+![NVIDIA: generated daily candlesticks, volume and MA20/MA50 in dark mode](docs/images/nvda-dark.jpg)
 
-*Actual builder output · 588000.SH · 160 daily bars, 2026-02-06–2026-10-12 · frozen historical data, not live quotes. [Data and screenshot provenance](docs/SHOWCASE.md).*
+*Actual builder output · NVDA / NASDAQ · 251 daily bars, 2025-10-15–2026-10-14 · frozen historical data, not live quotes. [Data and screenshot provenance](docs/SHOWCASE.md).*
 
 ## Why this skill
 
@@ -42,7 +42,7 @@ If `CODEX_HOME` is set, use its `skills/tradingview-chart` directory instead. Co
 
 Then ask:
 
-> Use $tradingview-chart to chart 588000.SH over the last year. Include volume and MA20/MA50, verify the source and adjustment convention, and state the last trading session.
+> Use $tradingview-chart to chart NVDA over the last year. Include volume and MA20/MA50, verify the source and adjustment convention, and state the last trading session.
 
 Other `SKILL.md`-compatible agents can load the same folder through their own skill installation mechanism. Inline display depends on the host; standalone HTML does not need Codex.
 
@@ -51,7 +51,7 @@ Other `SKILL.md`-compatible agents can load the same folder through their own sk
 From the repository root:
 
 ```bash
-python scripts/build_chart.py --input docs/examples/588000.json --output output/chart.html --standalone
+python scripts/build_chart.py --input docs/examples/NVDA.json --output output/chart.html --standalone
 python -m http.server 8765 --directory output
 ```
 
@@ -61,12 +61,12 @@ Remove `--standalone` to generate an inline fragment. The embedding host must su
 
 ## More examples
 
-| Technology leaders · light | Banking · dark |
+| Apple · light | Microsoft · light |
 | --- | --- |
-| ![515000.SH technology ETF candlesticks, volume and moving averages](docs/images/technology-light.jpg) | ![512800.SH bank ETF candlesticks, volume and moving averages in dark mode](docs/images/bank-dark.jpg) |
-| [515000.SH input](docs/examples/515000.json) | [512800.SH input](docs/examples/512800.json) |
+| ![AAPL candlesticks, volume and moving averages](docs/images/aapl-light.jpg) | ![MSFT candlesticks, volume and moving averages](docs/images/msft-light.jpg) |
+| [AAPL input](docs/examples/AAPL.json) | [MSFT input](docs/examples/MSFT.json) |
 
-All screenshots show real, frozen historical OHLCV from the same feed for price and volume. The labels currently use Chinese market terminology; the skill instructions and this README are available in English. See [snapshot metadata and reproduction](docs/SHOWCASE.md).
+All screenshots show real, frozen historical OHLCV from the same feed for price and volume. The examples use English chart labels (`locale: "en-US"`); Chinese labels remain available as the default. See [snapshot metadata and reproduction](docs/SHOWCASE.md).
 
 ## Bring your own data
 
@@ -83,9 +83,9 @@ Use UTF-8 JSON with these fields:
 
 Dates must use `YYYY-MM-DD`; duplicates are rejected and bars are sorted. Prices must be positive, finite and satisfy OHLC bounds. Volume is nonnegative and expressed in shares/ETF units, not lots or turnover. Omit missing volume; never fill it with zero. Do not insert market holidays.
 
-Optional `levels` entries have a positive `price`, text `title`, and `kind` of `support` or `resistance`. These are analyst annotations, not fair-value estimates. Additional provenance such as `retrieved_utc` can be retained in the JSON.
+Optional `locale` selects `en-US` or `zh-CN` (default). Optional `levels` entries have a positive `price`, text `title`, and `kind` of `support` or `resistance`. These are analyst annotations, not fair-value estimates. Additional provenance such as `retrieved_utc` can be retained in the JSON.
 
-MA20/MA50 use supplied closes and appear only when enough observations exist. The builder does not repair missing sessions or inconsistent adjustments. Text is escaped before JSON is embedded in HTML. See [the original smaller example](examples/588000-historical.json) for a complete input.
+MA20/MA50 use supplied closes and appear only when enough observations exist. The builder does not repair missing sessions or inconsistent adjustments. Text is escaped before JSON is embedded in HTML. See [the complete NVDA example](docs/examples/NVDA.json) for a complete input.
 
 ## Development
 

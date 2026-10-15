@@ -22,6 +22,8 @@ currency, date range and adjustment convention are in that file. The volume is
 converted from 100-unit lots to ETF units. The repository's MIT software license
 does not grant rights in third-party market data.
 
-The additional `docs/examples/*.json` snapshots and `docs/images/*.jpg`
-screenshots use the same Tencent Finance source. Their dates, conventions and
-reproduction steps are documented in [docs/SHOWCASE.md](docs/SHOWCASE.md).
+The US-stock `docs/examples/AAPL.json`, `NVDA.json`, and `MSFT.json` snapshots
+and their screenshots use Yahoo Finance daily historical OHLCV. The earlier
+numbered ETF examples remain sourced from Tencent Finance. Market data is not
+covered by the software MIT license. Dates, conventions and reproduction steps
+for the current gallery are documented in [docs/SHOWCASE.md](docs/SHOWCASE.md).

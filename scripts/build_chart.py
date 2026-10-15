@@ -13,6 +13,8 @@ def validate(data):
     for key in ('symbol', 'currency', 'as_of', 'source_name', 'source_url', 'adjustment'):
         if not isinstance(data.get(key), str) or not data[key]:
             raise ValueError(f'Missing metadata: {key}')
+    if data.get('locale', 'zh-CN') not in ('zh-CN', 'en-US'):
+        raise ValueError('Unsupported locale: choose zh-CN or en-US')
     if not data.get('bars'):
         raise ValueError('No observations')
     dates = set()
@@ -45,7 +47,7 @@ def build(data, standalone=False):
     fragment = template.replace('__ROOT_ID__', 'tv-'+uuid.uuid4().hex).replace('__CHART_DATA__', payload)
     if standalone:
         wrapper = (assets / 'standalone.html').read_text(encoding='utf-8')
-        return wrapper.replace('__FRAGMENT__', fragment)
+        return wrapper.replace('lang="zh-CN"', 'lang="'+data.get('locale', 'zh-CN')+'"').replace('__FRAGMENT__', fragment)
     return fragment
 
 def main():
