@@ -17,7 +17,7 @@ A small `SKILL.md` package for Codex and compatible agents. Turn sourced OHLCV i
 
 ## Why this skill
 
-Financial conversations are easier to inspect with a chart beside the explanation. This skill gives the agent a repeatable workflow: **verify the instrument and data → build → check the render → explain the chart**.
+When discussing markets with an AI agent, I want an interactive chart right beside the conversation: zoom into candles, drag through history and inspect prices with a crosshair. I packaged that capability as a reusable skill, with a repeatable workflow: **verify the instrument and data → build → check the render → explain the chart**.
 
 - **Interactive by default.** Candles, volume, MA20/MA50, optional support/resistance lines, native zoom/pan and crosshair.
 - **Traceable observations.** Source, date, currency and adjustment convention travel with the input. The builder checks dates, numeric values and OHLC bounds.
