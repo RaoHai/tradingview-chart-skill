@@ -21,11 +21,13 @@ The builder deliberately has **no market-data access**. It accepts only a JSON f
 
 3. **Write the data JSON** (schema below). A complete working example lives at [`docs/examples/NVDA.json`](docs/examples/NVDA.json) — copy its shape, including the provenance fields.
 
-4. **Build the chart** with the bundled script (Python 3.10+, standard library only):
+4. **Check and build the chart** with the bundled script (Python 3.10+, standard library only):
 
    ```bash
    python <skill-directory>/scripts/build_chart.py --input <absolute data.json> --output <absolute chart.html>
    ```
+
+   Before rendering, run `python <skill-directory>/scripts/build_chart.py --input <absolute data.json> --check --report <absolute quality.json>`. Fix errors (exit code `2`) and disclose material warnings. Reports summarize supplied sessions, missing volume and MA availability; they do not verify quotes, market calendars or adjustments. Missing retrieval time is a warning, not a build failure. Record `retrieved_utc` as an ISO 8601 UTC datetime with `Z` or `+00:00` when known. Add `--report` to a normal build to save the same quality report. Never treat an old output file as a successful build after a failed command.
 
    - Default output is an HTML **fragment** for hosts that provide an inline-rendering/visualize skill — follow that host's rendering contract and save fragments where the host expects them.
    - Add `--standalone` for a self-contained page with its own light/dark theme when no rendering host exists.

@@ -59,6 +59,20 @@ Open **http://localhost:8765/chart.html**, or open the HTML file directly. No pi
 
 Remove `--standalone` to generate an inline fragment. The embedding host must supply theme variables and allow its scripts and the pinned CDN library.
 
+## Check data before rendering
+
+Validate without generating HTML, and optionally save a JSON report:
+
+```bash
+python scripts/build_chart.py --input docs/examples/NVDA.json --check --report output/quality.json
+```
+
+You can also add `--report output/quality.json` to a normal build. Reports include first/last supplied sessions, bar and volume counts, available MA windows, and errors/warnings with a `code` and field `path`. Invalid input exits with code `2`; warnings alone exit with `0`. An invalid build does not write or update the chart, so an existing output may belong to an earlier successful build. Input, chart and report must use different paths.
+
+Missing volume, missing retrieval time and insufficient MA20/MA50 history produce warnings without filling data. Charts display the supplied range, volume coverage, insufficient MA history and retrieval time when recorded. Optional `retrieved_utc` must be an ISO 8601 UTC datetime ending in `Z` or `+00:00`, such as `2026-10-27T01:00:00Z`. Existing inputs without it still render.
+
+Checks are structural only: they do not verify quotes, trading-calendar completeness or adjustment consistency. A source link is not independent verification. Weekends and holidays are not flagged as missing sessions.
+
 ## More examples
 
 | Apple · light | Microsoft · light |
